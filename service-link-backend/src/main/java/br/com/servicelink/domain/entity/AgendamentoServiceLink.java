@@ -22,4 +22,5 @@ public class AgendamentoServiceLink extends Agendamento {
     public void setStatus(AgendamentoStatus status) {
         super.setStatus(status);
     }
+
 }

@@ -14,6 +14,7 @@ import br.com.serviceframework.domain.entity.Avaliacao;
 import br.com.serviceframework.domain.entity.Cliente;
 import br.com.serviceframework.domain.entity.Servico;
 import br.com.serviceframework.domain.interfaces.AgendamentoStatus;
+import br.com.serviceframework.strategy.PrecoStrategy;
 import br.com.servicelink.enumerations.AgendamentoStatusServiceLink;
 import br.com.servicelink.repository.AgendamentoServiceLinkRepository;
 import br.com.serviceframework.repository.AvaliacaoRepository;
@@ -40,6 +41,7 @@ public class AgendamentoServiceImpl extends AbstractAgendamentoService<Agendamen
     private final ServicoRepository servicoRepository;
     private final AgendamentoValidator agendamentoValidator;
     private final AuthService authService;
+    private final PrecoStrategy<AgendamentoServiceLink> precoStrategy;
 
     @Autowired
     public AgendamentoServiceImpl(
@@ -48,13 +50,15 @@ public class AgendamentoServiceImpl extends AbstractAgendamentoService<Agendamen
             ClienteRepository clienteRepository,
             ServicoRepository servicoRepository,
             AgendamentoValidator agendamentoValidator,
-            AuthService authService) {
+            AuthService authService,
+            PrecoStrategy<AgendamentoServiceLink> precoStrategy) {
         this.agendamentoRepository = agendamentoRepository;
         this.avaliacaoRepository = avaliacaoRepository;
         this.clienteRepository = clienteRepository;
         this.servicoRepository = servicoRepository;
         this.agendamentoValidator = agendamentoValidator;
         this.authService = authService;
+        this.precoStrategy = precoStrategy;
     }
 
     // --- MÉTODOS DO FRAMEWORK ---
@@ -71,7 +75,9 @@ public class AgendamentoServiceImpl extends AbstractAgendamentoService<Agendamen
 
     @Override
     protected void calcularPreco(AgendamentoServiceLink agendamento) {
-        // Lógica de preço futuro
+        BigDecimal precoFinal = precoStrategy.calcularPreco(agendamento);
+
+        agendamento.setPrecoTotal(precoFinal);
     }
 
     @Override
