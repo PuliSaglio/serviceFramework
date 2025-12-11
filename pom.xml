@@ -19,6 +19,8 @@
         <module>service-framework-backend</module> <!-- o core -->
         <module>service-link-backend</module>
         <module>music-link-backend</module>
+        <module>mind-link-backend</module>
+
     </modules>
 
     <dependencyManagement>
