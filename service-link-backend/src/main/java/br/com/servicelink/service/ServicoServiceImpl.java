@@ -159,7 +159,7 @@ public class ServicoServiceImpl extends ServicoService {
     }
 
     @Override
-    public List<Servico> listarServicos() {
+    public List<ServicoDTO> listarServicos() {
         return servicoRepository.findAll();
     }
 

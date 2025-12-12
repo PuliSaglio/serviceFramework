@@ -3,12 +3,17 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 
+interface ServiceCategory {
+    id: number;
+    nome: string;
+}
+
 interface Service {
     id: number;
     nome: string;
     descricao: string;
     precoBase: number;
-    categoria: string;
+    categoria: ServiceCategory;
 }
 
 interface ServiceCardProps {
@@ -22,7 +27,7 @@ const ServiceCard = ({ service }: ServiceCardProps) => {
         <div className="flex items-start justify-between gap-2 mb-2">
           <CardTitle className="text-xl">{service.nome}</CardTitle>
           <Badge variant="secondary" className="shrink-0">
-            {service.categoria}
+            {service.categoria.nome}
           </Badge>
         </div>
         <CardDescription>{service.descricao}</CardDescription>

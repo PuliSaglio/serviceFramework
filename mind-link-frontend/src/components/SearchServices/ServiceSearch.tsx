@@ -99,13 +99,14 @@ const ServiceSearch = ({ onFilter }: ServiceSearchProps) => {
                             </SelectTrigger>
                             <SelectContent>
                                 <SelectItem value="all">Todas</SelectItem>
-                                <SelectItem value="LIMPEZA">Limpeza</SelectItem>
-                                <SelectItem value="HIDRAULICA">Hidráulica</SelectItem>
-                                <SelectItem value="ELETRICA">Elétrica</SelectItem>
-                                <SelectItem value="PINTURA">Pintura</SelectItem>
-                                <SelectItem value="JARDINAGEM">Jardinagem</SelectItem>
-                                <SelectItem value="COZINHA">Cozinha</SelectItem>
-                                <SelectItem value="OUTRAS">Outras</SelectItem>
+                                <SelectItem value="1">Cognitivo-comportamental</SelectItem>
+                                <SelectItem value="2">Psicanálise</SelectItem>
+                                <SelectItem value="3">Humanista</SelectItem>
+                                <SelectItem value="4">Comportamentais clássicas</SelectItem>
+                                <SelectItem value="5">Sistêmica</SelectItem>
+                                <SelectItem value="6">EMDR</SelectItem>
+                                <SelectItem value="7">Interpessoal</SelectItem>
+                                <SelectItem value="999">Geral</SelectItem>
                             </SelectContent>
                         </Select>
                     </div>

@@ -3,8 +3,7 @@ package br.com.mindlink.controller;
 import br.com.serviceframework.domain.DTO.BuscaServicosDTO;
 import br.com.mindlink.domain.DTO.ServicoDTO;
 import br.com.serviceframework.domain.entity.Servico;
-import br.com.serviceframework.service.ServicoService;
-import br.com.mindlink.service.ServicoServiceImpl;
+import br.com.mindlink.service.MindLinkServicoService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.apache.coyote.BadRequestException;
@@ -20,7 +19,7 @@ import java.util.List;
 @RequestMapping("api/servico")
 public class ServicoController {
     @Autowired
-    private ServicoServiceImpl servicoService;
+    private MindLinkServicoService servicoService;
 
     /**
      * Busca serviços com filtros opcionais. Se nenhum filtro for fornecido, retorna todos os serviços.

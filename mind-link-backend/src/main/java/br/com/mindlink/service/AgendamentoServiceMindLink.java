@@ -27,7 +27,6 @@ import br.com.mindlink.security.AuthService;
 import br.com.mindlink.service.validator.AgendamentoValidator;
 import br.com.mindlink.domain.DTO.AgendamentoDTO;
 import br.com.mindlink.domain.DTO.AgendamentoListagemDTO;
-import br.com.mindlink.domain.entity.AgendamentoMindLink;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.apache.coyote.BadRequestException;
@@ -35,7 +34,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class AgendamentoServiceImpl extends AbstractAgendamentoService<AgendamentoMindLink> {
+public class AgendamentoServiceMindLink extends AbstractAgendamentoService<AgendamentoMindLink> {
 
     private final AgendamentoServiceLinkRepository agendamentoRepository;
     private final AvaliacaoRepository avaliacaoRepository;
@@ -46,7 +45,7 @@ public class AgendamentoServiceImpl extends AbstractAgendamentoService<Agendamen
     private final PrecoStrategy<AgendamentoMindLink> precoStrategy;
 
     @Autowired
-    public AgendamentoServiceImpl(
+    public AgendamentoServiceMindLink(
             AgendamentoServiceLinkRepository agendamentoRepository,
             AvaliacaoRepository avaliacaoRepository,
             ClienteRepository clienteRepository,
@@ -108,11 +107,10 @@ public class AgendamentoServiceImpl extends AbstractAgendamentoService<Agendamen
         agendamento.setObservacao(agendamentoDTO.observacao());
         agendamento.setCliente(cliente);
         agendamento.setServico(servico);
+        agendamento.setMinutosDuracao(agendamentoDTO.minutosDuracao());
 
-        // Chama o método do pai (Template Method)
         AgendamentoMindLink agendamentoSalvo = super.criarAgendamento(agendamento);
 
-        // Conversão manual para DTO
         return converterParaDTO(agendamentoSalvo);
     }
 
