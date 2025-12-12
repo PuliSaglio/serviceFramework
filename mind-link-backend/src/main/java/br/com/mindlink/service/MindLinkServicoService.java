@@ -10,7 +10,7 @@ import br.com.serviceframework.domain.interfaces.ICategoriaServicos;
 import br.com.mindlink.domain.DTO.ServicoDTO;
 import br.com.serviceframework.domain.entity.Prestador;
 import br.com.serviceframework.repository.PrestadorRepository;
-import br.com.mindlink.enumerations.Categorias;
+import br.com.mindlink.enumerations.MindLinkCategorias;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.apache.coyote.BadRequestException;
@@ -22,12 +22,12 @@ import br.com.serviceframework.repository.ServicoRepository;
 import br.com.serviceframework.service.ServicoService;
 
 @Service
-public class ServicoServiceImpl extends ServicoService {
+public class MindLinkServicoService extends ServicoService {
 
     private final ServicoRepository servicoRepository;
 
     @Autowired
-    public ServicoServiceImpl(ServicoRepository servicoRepository) {
+    public MindLinkServicoService(ServicoRepository servicoRepository) {
         super(servicoRepository);
         this.servicoRepository = servicoRepository;
     }
@@ -57,7 +57,7 @@ public class ServicoServiceImpl extends ServicoService {
     }
 
     public Servico editarServico(Long servicoId, ServicoDTO newServicoDTO) throws BadRequestException {
-        ICategoriaServicos categoriaDoDominio = Categorias.ofId(newServicoDTO.categoriaId());
+        ICategoriaServicos categoriaDoDominio = MindLinkCategorias.ofId(newServicoDTO.categoriaId());
 
         if (categoriaDoDominio == null) {
             throw new IllegalArgumentException("ID de Categoria " + newServicoDTO.categoriaId() + " é inválido para este domínio.");
@@ -141,7 +141,7 @@ public class ServicoServiceImpl extends ServicoService {
     }
 
     private Servico criarServicoFromDTO(ServicoDTO dto, Prestador prestador) {
-        ICategoriaServicos categoriaDoDominio = Categorias.ofId(dto.categoriaId());
+        ICategoriaServicos categoriaDoDominio = MindLinkCategorias.ofId(dto.categoriaId());
 
         if (categoriaDoDominio == null) {
             throw new IllegalArgumentException("ID de Categoria " + dto.categoriaId() + " é inválido para este domínio.");
@@ -172,7 +172,7 @@ public class ServicoServiceImpl extends ServicoService {
 
     public List<Servico> buscarServicosPorPrecoBase(String categoria, String nome) {
 
-        Categorias categoriaDomestica = Categorias.fromString(categoria);
+        MindLinkCategorias categoriaDomestica = MindLinkCategorias.fromString(categoria);
 
         Optional<Servico> servicoMaisCaro = servicoRepository.findTop1ByOrderByPrecoBaseDesc(categoriaDomestica, nome);
         Optional<Servico> servicoMaisBarato = servicoRepository.findTop1ByOrderByPrecoBaseAsc(categoriaDomestica, nome);
@@ -194,9 +194,9 @@ public class ServicoServiceImpl extends ServicoService {
 
         validarBuscaServicoDTO(servicoDTO);
 
-        ICategoriaServicos categoriaDoDominio = Categorias.ofId(servicoDTO.id());
+        ICategoriaServicos categoria = MindLinkCategorias.ofId(servicoDTO.id());
 
-        if (categoriaDoDominio == null) {
+        if (categoria == null) {
             throw new IllegalArgumentException("ID de Categoria " + servicoDTO.id() + " é inválido para este domínio.");
         }
 
@@ -206,7 +206,7 @@ public class ServicoServiceImpl extends ServicoService {
                 servicoDTO.descricao(),
                 servicoDTO.precoMin(),
                 servicoDTO.precoMax(),
-                categoriaDoDominio
+                categoria
         );
 
         return servicos;

@@ -28,10 +28,10 @@ export default function Home() {
           <div className="space-y-8 animate-fade-in">
             <div className="space-y-4">
               <h2 className="text-4xl md:text-5xl font-bold text-foreground leading-tight">
-                  Sua jornada de autoconhecimento começa aqui
+                  Encontre o psicólogo ideal para você
               </h2>
               <p className="text-lg text-muted-foreground">
-                  Cuide da sua mente com especialistas verificados. De terapia cognitivo-comportamental a psicanálise, conectamos você ao seu bem-estar emocional.
+                  Cuide da sua mente com especialistas verificados. De terapia cognitivo-comportamental a psicanálise, conectamos você ao profissional ideal.
               </p>
             </div>
 
@@ -59,15 +59,15 @@ export default function Home() {
             <div className="flex flex-wrap gap-6 pt-4">
               <div className="flex items-center gap-2 text-muted-foreground">
                 <Shield className="h-5 w-5 text-primary" />
-                <span className="text-sm">Profissionais verificados</span>
+                <span className="text-sm">Psicólogos verificados</span>
               </div>
               <div className="flex items-center gap-2 text-muted-foreground">
-                <Star className="h-5 w-5 text-secondary" />
+                <Star className="h-5 w-5 text-primary" />
                 <span className="text-sm">Avaliações reais</span>
               </div>
               <div className="flex items-center gap-2 text-muted-foreground">
-                <Clock className="h-5 w-5 text-accent" />
-                <span className="text-sm">Atendimento rápido</span>
+                <Clock className="h-5 w-5 text-primary" />
+                <span className="text-sm">Agendamento rápido</span>
               </div>
             </div>
           </div>

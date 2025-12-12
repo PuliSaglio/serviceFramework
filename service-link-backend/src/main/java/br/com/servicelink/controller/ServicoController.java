@@ -34,7 +34,7 @@ public class ServicoController {
      * @return Lista de serviços que atendem aos filtros
      */
     @GetMapping
-    public List<Servico> findAll(
+    public List<ServicoDTO> findAll(
             @RequestParam(required = false, name = "id") Long id,
             @RequestParam(required = false, name = "nome") String nome,
             @RequestParam(required = false, name = "descricao") String descricao,

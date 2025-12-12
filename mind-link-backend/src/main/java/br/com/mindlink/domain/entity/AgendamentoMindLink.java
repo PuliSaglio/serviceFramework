@@ -8,6 +8,9 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 @Entity
 @Table(name = "agendamento")
 public class AgendamentoMindLink extends Agendamento {
@@ -34,4 +37,7 @@ public class AgendamentoMindLink extends Agendamento {
         this.minutosDuracao = minutosDuracao;
     }
 
+    public BigDecimal getHorasDuracao() {
+        return BigDecimal.valueOf(this.minutosDuracao).divide(BigDecimal.valueOf(60), 2, RoundingMode.HALF_UP);
+    }
 }

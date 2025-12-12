@@ -3,7 +3,7 @@ package br.com.mindlink.controller;
 import br.com.serviceframework.domain.DTO.AvaliacaoDTO;
 import br.com.mindlink.domain.DTO.AgendamentoDTO;
 import br.com.mindlink.domain.DTO.AgendamentoListagemDTO;
-import br.com.mindlink.service.AgendamentoServiceImpl;
+import br.com.mindlink.service.AgendamentoServiceMindLink;
 import jakarta.validation.Valid;
 import org.apache.coyote.BadRequestException;
 import org.springframework.http.HttpStatus;
@@ -20,7 +20,7 @@ import java.util.Map;
 @RequestMapping("/api/agendamento")
 public class AgendamentoController {
     @Autowired
-    private AgendamentoServiceImpl agendamentoService;
+    private AgendamentoServiceMindLink agendamentoService;
 
     /**
      * Lista todos os agendamentos cadastrados.
