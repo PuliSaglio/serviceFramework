@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
+import br.com.servicelink.mapper.ServicoMapper;
 import br.com.serviceframework.domain.DTO.BuscaServicosDTO;
 import br.com.serviceframework.domain.interfaces.ICategoriaServicos;
 import br.com.servicelink.domain.DTO.ServicoDTO;
@@ -159,8 +159,15 @@ public class ServicoServiceImpl extends ServicoService {
     }
 
     @Override
-    public List<ServicoDTO> listarServicos() {
+    public List<Servico> listarServicos() {
         return servicoRepository.findAll();
+    }
+
+    public List<ServicoDTO> listarServicosDTO() {
+        return servicoRepository.findAll()
+                .stream()
+                .map(ServicoMapper::toServicoDTO)
+                .toList();
     }
 
 
@@ -217,4 +224,12 @@ public class ServicoServiceImpl extends ServicoService {
             throw new BadRequestException("Id do Serviço inválido");
         }
     }
+
+    public List<ServicoDTO> buscarServicoDTO(BuscaServicosDTO filtro) throws BadRequestException {
+        return buscarServico(filtro)
+                .stream()
+                .map(ServicoMapper::toServicoDTO)
+                .toList();
+    }
+
 }

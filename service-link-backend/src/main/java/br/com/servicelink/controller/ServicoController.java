@@ -46,12 +46,12 @@ public class ServicoController {
         boolean semFiltro = id == null && nome == null && descricao == null && precoMin == null && precoMax == null && categoria == null;
 
         if (semFiltro) {
-            return servicoService.listarServicos();
+            return servicoService.listarServicosDTO();
         }
 
         BuscaServicosDTO filtro = new BuscaServicosDTO(id, nome, descricao, precoMin, precoMax, categoria);
         try{
-            return servicoService.buscarServico(filtro);
+            return servicoService.buscarServicoDTO(filtro);
         } catch (BadRequestException e) {
             throw new RuntimeException(e);
         }
