@@ -6,7 +6,7 @@ public record ServicoDTO(
         Long id,
         String nome,
         String descricao,
-        BigDecimal precoPorHora,
+        BigDecimal precoBase,
         Long categoriaId,
         String imagemUrl
 ) {
