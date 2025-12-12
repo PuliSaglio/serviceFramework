@@ -12,7 +12,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
         "br.com.serviceframework"
 })
 @EntityScan({
-        "br.com.servicelink.domain.entity",
+        "br.com.musiclink.domain.entity",
         "br.com.serviceframework.domain.entity"
 })
 @EnableJpaRepositories({
