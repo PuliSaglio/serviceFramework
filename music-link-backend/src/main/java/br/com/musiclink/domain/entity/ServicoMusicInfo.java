@@ -1,9 +1,8 @@
 package br.com.musiclink.domain.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import br.com.musiclink.domain.converter.CategoriaMusicaConverter;
+import br.com.musiclink.enumerations.CategoriaMusica;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "servico_music_info")
@@ -16,11 +15,17 @@ public class ServicoMusicInfo {
     @Column(name = "quantidade_aulas")
     private Integer quantidadeAulas;
 
+
+    @Convert(converter = CategoriaMusicaConverter.class)
+    @Column(name = "instrumento_id")
+    private CategoriaMusica instrumento;
+
     public ServicoMusicInfo() {}
 
-    public ServicoMusicInfo(Long servicoId, Integer quantidadeAulas) {
+    public ServicoMusicInfo(Long servicoId, Integer quantidadeAulas, CategoriaMusica instrumento) {
         this.servicoId = servicoId;
         this.quantidadeAulas = quantidadeAulas;
+        this.instrumento = instrumento;
     }
 
     public Long getServicoId() {
@@ -37,5 +42,13 @@ public class ServicoMusicInfo {
 
     public void setQuantidadeAulas(Integer quantidadeAulas) {
         this.quantidadeAulas = quantidadeAulas;
+    }
+
+    public CategoriaMusica getInstrumento() {
+        return instrumento;
+    }
+
+    public void setInstrumento(CategoriaMusica instrumento) {
+        this.instrumento = instrumento;
     }
 }

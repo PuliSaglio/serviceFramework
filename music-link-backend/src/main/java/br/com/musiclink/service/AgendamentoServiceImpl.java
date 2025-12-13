@@ -5,10 +5,16 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.YearMonth;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
+
+import br.com.musiclink.domain.DTO.AgendamentoCadastroDTO;
+import br.com.musiclink.domain.entity.ServicoMusicInfo;
+import br.com.musiclink.repository.ServicoMusicInfoRepository;
+import br.com.musiclink.strategy.MusicLinkPrecoStrategy;
 import br.com.serviceframework.domain.DTO.AvaliacaoDTO;
 import br.com.serviceframework.domain.entity.Avaliacao;
 import br.com.serviceframework.domain.entity.Cliente;
@@ -20,7 +26,6 @@ import br.com.serviceframework.repository.AvaliacaoRepository;
 import br.com.serviceframework.repository.ClienteRepository;
 import br.com.serviceframework.repository.ServicoRepository;
 import br.com.serviceframework.service.AbstractAgendamentoService;
-import br.com.musiclink.security.AuthService;
 import br.com.musiclink.service.validator.AgendamentoValidator;
 import br.com.musiclink.domain.DTO.AgendamentoDTO;
 import br.com.musiclink.domain.DTO.AgendamentoListagemDTO;
@@ -39,7 +44,9 @@ public class AgendamentoServiceImpl extends AbstractAgendamentoService<Agendamen
     private final ClienteRepository clienteRepository;
     private final ServicoRepository servicoRepository;
     private final AgendamentoValidator agendamentoValidator;
-    private final AuthService authService;
+    private final ServicoMusicInfoRepository musicInfoRepository;
+    public MusicLinkPrecoStrategy musicLinkPrecoStrategy;
+
 
     @Autowired
     public AgendamentoServiceImpl(
@@ -48,13 +55,15 @@ public class AgendamentoServiceImpl extends AbstractAgendamentoService<Agendamen
             ClienteRepository clienteRepository,
             ServicoRepository servicoRepository,
             AgendamentoValidator agendamentoValidator,
-            AuthService authService) {
+            ServicoMusicInfoRepository musicInfoRepository,
+            MusicLinkPrecoStrategy musicLinkPrecoStrategy) {
         this.agendamentoRepository = agendamentoRepository;
         this.avaliacaoRepository = avaliacaoRepository;
         this.clienteRepository = clienteRepository;
         this.servicoRepository = servicoRepository;
         this.agendamentoValidator = agendamentoValidator;
-        this.authService = authService;
+        this.musicInfoRepository = musicInfoRepository;
+        this.musicLinkPrecoStrategy = musicLinkPrecoStrategy;
     }
 
     // --- MÉTODOS DO FRAMEWORK ---
@@ -82,7 +91,7 @@ public class AgendamentoServiceImpl extends AbstractAgendamentoService<Agendamen
     // --- MÉTODOS PÚBLICOS DA APLICAÇÃO ---
 
     @Transactional
-    public AgendamentoDTO salvarAgendamento(AgendamentoDTO agendamentoDTO) {
+    public List<AgendamentoListagemDTO> salvarAgendamento(AgendamentoCadastroDTO agendamentoDTO) {
         Long usuarioId = agendamentoDTO.clienteId();
         Cliente cliente = clienteRepository.findByUserId(usuarioId);
 
@@ -93,19 +102,39 @@ public class AgendamentoServiceImpl extends AbstractAgendamentoService<Agendamen
         Servico servico = servicoRepository.findById(agendamentoDTO.servicoId())
                 .orElseThrow(() -> new EntityNotFoundException("Serviço não encontrado com o ID: " + agendamentoDTO.servicoId()));
 
+        int aulas = musicInfoRepository.findByServicoId(agendamentoDTO.servicoId())
+                .map(ServicoMusicInfo::getQuantidadeAulas)
+                .orElse(0);
+
+        int numAulasParaCriar = Math.min(aulas, agendamentoDTO.datasHora().size());
+
+
+        if (numAulasParaCriar == 0 && !agendamentoDTO.datasHora().isEmpty()) {
+            throw new IllegalArgumentException("O serviço " + servico.getNome() + " não tem aulas configuradas para agendamento.");
+        }
+
         agendamentoValidator.validarNovoAgendamento(agendamentoDTO, servico);
 
-        AgendamentoMusicLink agendamento = new AgendamentoMusicLink();
-        agendamento.setDataHora(agendamentoDTO.dataHora());
-        agendamento.setObservacao(agendamentoDTO.observacao());
-        agendamento.setCliente(cliente);
-        agendamento.setServico(servico);
+        List<AgendamentoMusicLink> agendamentosSalvos = new ArrayList<>();
 
-        // Chama o método do pai (Template Method)
-        AgendamentoMusicLink agendamentoSalvo = super.criarAgendamento(agendamento);
+        // O loop deve ir até numAulasParaCriar (ou agendamentoDTO.datasHora().size() se você confia nos dados)
+        for (int i = 0; i < numAulasParaCriar; i++) {
+            AgendamentoMusicLink agendamento = new AgendamentoMusicLink();
+            agendamento.setDataHora(agendamentoDTO.datasHora().get(i));
+            agendamento.setObservacao(agendamentoDTO.observacao());
+            agendamento.setCliente(cliente);
+            agendamento.setServico(servico);
+            agendamento.setPrecoTotal(musicLinkPrecoStrategy.calcularPreco(agendamento));
 
-        // Conversão manual para DTO
-        return converterParaDTO(agendamentoSalvo);
+            AgendamentoMusicLink agendamentoSalvo = super.criarAgendamento(agendamento);
+
+            agendamentosSalvos.add(agendamentoSalvo);
+        }
+
+
+        return agendamentosSalvos.stream()
+                .map(this::converterParaListagemDTO)
+                .collect(Collectors.toList());
     }
 
     public AgendamentoDTO editarAgendamento(AgendamentoDTO agendamentoDTO, Long id) throws BadRequestException {
@@ -288,7 +317,8 @@ public class AgendamentoServiceImpl extends AbstractAgendamentoService<Agendamen
                 agendamento.getCliente().getUser().getUsername(),
                 agendamento.getServico().getId(),
                 agendamento.getServico().getNome(),
-                agendamento.getServico().getPrestador().getUser().getUsername()
+                agendamento.getServico().getPrestador().getUser().getUsername(),
+                agendamento.getPrecoTotal()
         );
     }
 

@@ -1,5 +1,8 @@
 package br.com.musiclink.domain.DTO;
 
+import br.com.musiclink.enumerations.CategoriaMusica;
+import br.com.musiclink.enumerations.NivelExperiencia;
+
 import java.math.BigDecimal;
 
 public record ServicoDTO(
@@ -8,7 +11,9 @@ public record ServicoDTO(
         String descricao,
         BigDecimal precoBase,
         Long categoriaId,
-        String imagemUrl
+        String imagemUrl,
+        Integer duracaoEmDias,
+        NivelExperiencia nivel
 ) {
 }
 

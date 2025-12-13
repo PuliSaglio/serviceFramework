@@ -41,6 +41,7 @@ public class RecomendacoesClienteServiceImpl extends AbstractRecomendacoesClient
             RecomendacoesCliente recomendacao,
             Cliente cliente
     ) {
+
         Agendamento ultimoAgendamento = agendamentoRepository
                 .findTop1ByClienteIdOrderByDataHoraDesc(cliente.getId())
                 .orElseThrow(() -> new RuntimeException("Cliente não possui agendamentos"));

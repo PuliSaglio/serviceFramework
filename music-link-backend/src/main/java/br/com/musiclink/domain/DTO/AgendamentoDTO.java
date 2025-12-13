@@ -1,6 +1,8 @@
 package br.com.musiclink.domain.DTO;
 
 import java.time.LocalDateTime;
+import java.util.List;
+
 import br.com.serviceframework.domain.DTO.AvaliacaoDTO;
 
 public record AgendamentoDTO(

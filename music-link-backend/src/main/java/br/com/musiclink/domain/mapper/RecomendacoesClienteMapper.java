@@ -1,5 +1,6 @@
 package br.com.musiclink.domain.mapper;
 
+import br.com.musiclink.enumerations.NivelExperiencia;
 import br.com.serviceframework.domain.entity.RecomendacoesCliente;
 import br.com.serviceframework.domain.entity.Servico;
 import br.com.musiclink.domain.DTO.RecomendacoesClienteResponseDTO;
@@ -38,7 +39,9 @@ public class RecomendacoesClienteMapper {
                 servico.getDescricao(),
                 servico.getPrecoBase(),
                 servico.getCategoria().getIdCategoria(),
-                servico.getImagemUrl()
+                servico.getImagemUrl(),
+                5,
+                NivelExperiencia.INICIANTE
         );
     }
 }

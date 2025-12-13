@@ -1,5 +1,6 @@
 package br.com.musiclink.service.validator;
 
+import br.com.musiclink.domain.DTO.AgendamentoCadastroDTO;
 import br.com.serviceframework.domain.entity.Servico;
 import br.com.serviceframework.exceptions.BusinessException;
 import br.com.musiclink.domain.entity.AgendamentoMusicLink;
@@ -26,10 +27,13 @@ public class AgendamentoValidator {
      * @param servico o serviço relacionado ao agendamento
      * @throws BusinessException se alguma validação falhar
      */
-    public void validarNovoAgendamento(AgendamentoDTO agendamentoDTO, Servico servico) {
-        validarDataHora(agendamentoDTO.dataHora());
-        validarDisponibilidadePrestador(servico.getPrestador().getId(), agendamentoDTO.dataHora());
-        validarDadosObrigatorios(agendamentoDTO);
+    public void validarNovoAgendamento(AgendamentoCadastroDTO agendamentoDTO, Servico servico) {
+        agendamentoDTO.datasHora().forEach(agendamentoDataHora -> {
+            validarDataHora(agendamentoDataHora);
+            validarDisponibilidadePrestador(servico.getPrestador().getId(), agendamentoDataHora);
+        });
+
+        //validarDadosObrigatorios(agendamentoDTO);
     }
 
     /**

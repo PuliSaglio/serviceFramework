@@ -31,23 +31,33 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Plus, Trash2, Send } from "lucide-react";
 
 const servicoSchema = z.object({
-  nome: z.string().min(3, "Nome deve ter no mínimo 3 caracteres").max(100, "Nome muito longo"),
-  descricao: z.string().min(10, "Descrição deve ter no mínimo 10 caracteres").max(500, "Descrição muito longa"),
-  precoBase: z.number().positive("Preço deve ser positivo").min(1, "Preço mínimo é R$ 1,00"),
-  categoria: z.string().min(1, "Categoria é obrigatória"),
-  imagemUrl: z.string().url("URL inválida").optional().or(z.literal("")),
+    nome: z.string().min(3).max(100),
+    descricao: z.string().min(10).max(500),
+    precoBase: z.number().positive().min(1),
+    categoria: z.string().min(1),
+    nivel: z.string().min(1),
+    duracaoEmDias: z.number().int().positive().min(1),
+    imagemUrl: z.string().url().optional().or(z.literal("")),
 });
+
 
 type ServicoDTO = z.infer<typeof servicoSchema>;
 
 const categorias = [
-    "LIMPEZA",
-    "HIDRAULICA",
-    "ELETRICA",
-    "PINTURA",
-    "JARDINAGEM",
-    "COZINHA",
-    "OUTRAS"
+    { value: "VIOLAO", label: "Violão" },
+    { value: "PIANO", label: "Piano" },
+    { value: "FLAUTA", label: "Flauta" },
+    { value: "BATERIA", label: "Bateria" },
+    { value: "CANTO", label: "Canto" },
+    { value: "VIOLINO", label: "Violino" },
+    { value: "OUTRO", label: "Outro" },
+];
+
+const niveis = [
+    "INICIANTE",
+    "INTERMEDIARIO",
+    "AVANCADO",
+    "PROFISSIONAL",
 ];
 
 const Page = () => {
@@ -58,15 +68,19 @@ const Page = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const [formData, setFormData] = useState<ServicoDTO>({
-    nome: "",
-    descricao: "",
-    precoBase: 0,
-    categoria: "",
-    imagemUrl: "",
-  });
+    const [formData, setFormData] = useState<ServicoDTO>({
+        nome: "",
+        descricao: "",
+        precoBase: 0,
+        categoria: "",
+        nivel: "",
+        duracaoEmDias: 1,
+        imagemUrl: "",
+    });
 
-  const handleInputChange = (field: keyof ServicoDTO, value: string | number) => {
+
+
+    const handleInputChange = (field: keyof ServicoDTO, value: string | number) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
@@ -74,11 +88,12 @@ const Page = () => {
     if (validate(formData)) {
       setServicos((prev) => [...prev, formData]);
       setFormData({
-        nome: "",
-        descricao: "",
-        precoBase: 0,
-        categoria: "",
-        imagemUrl: "",
+          nome: "",
+          descricao: "",
+          precoBase: 0,
+          categoria: "",
+          nivel: "",
+          imagemUrl: "",
       });
       clearErrors();
       setIsDialogOpen(false);
@@ -137,7 +152,27 @@ const Page = () => {
             'Authorization': `Bearer ${token}`,
           'Content-Type': "application/json",
         },
-        body: JSON.stringify(servicos),
+          body: JSON.stringify(
+              servicos.map((s) => ({
+                  nome: s.nome,
+                  descricao: s.descricao,
+                  precoBase: s.precoBase,
+                  categoriaId: categorias.find(c => c.value === s.categoria)?.value
+                      ? categorias.find(c => c.value === s.categoria)!.value === "OUTRO"
+                          ? 999
+                          : categorias.find(c => c.value === s.categoria)!.value === "VIOLAO" ? 1 :
+                              categorias.find(c => c.value === s.categoria)!.value === "PIANO" ? 2 :
+                                  categorias.find(c => c.value === s.categoria)!.value === "FLAUTA" ? 3 :
+                                      categorias.find(c => c.value === s.categoria)!.value === "BATERIA" ? 4 :
+                                          categorias.find(c => c.value === s.categoria)!.value === "CANTO" ? 5 :
+                                              categorias.find(c => c.value === s.categoria)!.value === "VIOLINO" ? 6 : 999
+                      : 999,
+                  nivel: s.nivel,
+                  duracaoEmDias: s.duracaoEmDias,
+                  imagemUrl: s.imagemUrl || null,
+              }))
+          ),
+
       });
 
       if (!response.ok) {
@@ -192,7 +227,7 @@ const Page = () => {
                       id="nome"
                       value={formData.nome}
                       onChange={(e) => handleInputChange("nome", e.target.value)}
-                      placeholder="Ex: Limpeza Residencial Completa"
+                      placeholder="Aulas de violão"
                     />
                     {errors.nome && (
                       <p className="text-sm text-destructive">{errors.nome}</p>
@@ -228,30 +263,69 @@ const Page = () => {
                       <p className="text-sm text-destructive">{errors.precoBase}</p>
                     )}
                   </div>
+                    <div className="space-y-2">
+                        <Label htmlFor="duracaoEmDias">Duração (em dias) *</Label>
+                        <Input
+                            id="duracaoEmDias"
+                            type="number"
+                            min="1"
+                            value={formData.duracaoEmDias}
+                            onChange={(e) =>
+                                handleInputChange("duracaoEmDias", parseInt(e.target.value) || 1)
+                            }
+                        />
+                        {errors.duracaoEmDias && (
+                            <p className="text-sm text-destructive">{errors.duracaoEmDias}</p>
+                        )}
+                    </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="categoria">Categoria *</Label>
-                    <Select
-                      value={formData.categoria}
-                      onValueChange={(value) => handleInputChange("categoria", value)}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Selecione uma categoria" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {categorias.map((cat) => (
-                          <SelectItem key={cat} value={cat}>
-                            {cat}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    {errors.categoria && (
+
+                    <div className="space-y-2">
+                    <Label htmlFor="categoria">Instrumento *</Label>
+                      <Select
+                          value={formData.categoria}
+                          onValueChange={(value) => handleInputChange("categoria", value)}
+                      >
+                          <SelectTrigger>
+                              <SelectValue placeholder="Selecione um instrumento" />
+                          </SelectTrigger>
+                          <SelectContent>
+                              {categorias.map((cat) => (
+                                  <SelectItem key={cat.value} value={cat.value}>
+                                      {cat.label}
+                                  </SelectItem>
+                              ))}
+                          </SelectContent>
+                      </Select>
+
+                      {errors.categoria && (
                       <p className="text-sm text-destructive">{errors.categoria}</p>
                     )}
                   </div>
+                    <div className="space-y-2">
+                        <Label htmlFor="nivel">Nível *</Label>
+                        <Select
+                            value={formData.nivel}
+                            onValueChange={(value) => handleInputChange("nivel", value)}
+                        >
+                            <SelectTrigger>
+                                <SelectValue placeholder="Selecione o nível" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {niveis.map((nivel) => (
+                                    <SelectItem key={nivel} value={nivel}>
+                                        {nivel}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                        {errors.nivel && (
+                            <p className="text-sm text-destructive">{errors.nivel}</p>
+                        )}
+                    </div>
 
-                  <div className="space-y-2">
+
+                    <div className="space-y-2">
                     <Label htmlFor="imagemUrl">URL da Imagem (opcional)</Label>
                     <Input
                       id="imagemUrl"
@@ -295,8 +369,7 @@ const Page = () => {
                     <CardHeader>
                       <div className="flex items-start justify-between">
                         <div className="flex-1">
-                          <CardTitle>{servico.nome}</CardTitle>
-                          <CardDescription>{servico.categoria}</CardDescription>
+                          <CardTitle>{servico.nome}</CardTitle><CardDescription>{servico.categoria}</CardDescription>
                         </div>
                         <Button
                           variant="ghost"

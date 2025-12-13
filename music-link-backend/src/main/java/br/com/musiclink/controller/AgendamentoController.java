@@ -1,5 +1,7 @@
 package br.com.musiclink.controller;
 
+import br.com.musiclink.domain.DTO.AgendamentoCadastroDTO;
+import br.com.musiclink.domain.entity.AgendamentoMusicLink;
 import br.com.serviceframework.domain.DTO.AvaliacaoDTO;
 import br.com.musiclink.domain.DTO.AgendamentoDTO;
 import br.com.musiclink.domain.DTO.AgendamentoListagemDTO;
@@ -50,8 +52,8 @@ public class AgendamentoController {
      * @return Agendamento criado
      */
     @PostMapping
-    public AgendamentoDTO save(@RequestBody AgendamentoDTO agendamentoDTO){
-        AgendamentoDTO newAgendamento = agendamentoService.salvarAgendamento(agendamentoDTO);
+    public List<AgendamentoListagemDTO> save(@RequestBody AgendamentoCadastroDTO agendamentoDTO){
+        List<AgendamentoListagemDTO> newAgendamento = agendamentoService.salvarAgendamento(agendamentoDTO);
         return newAgendamento;
     }
 

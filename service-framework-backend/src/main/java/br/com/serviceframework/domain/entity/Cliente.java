@@ -16,7 +16,7 @@ public class Cliente {
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "perfil_id")
     @JsonIgnore
-    private PerfilUsuario perfilPrestador;
+    private PerfilUsuario perfilUsuario;
 
 
     public Long getId() {
@@ -36,10 +36,10 @@ public class Cliente {
     }
 
     public PerfilUsuario getPerfilUsuario() {
-        return perfilPrestador;
+        return perfilUsuario;
     }
 
     public void setPerfilUsuario(PerfilUsuario perfilUsuario) {
-        this.perfilPrestador = perfilUsuario;
+        this.perfilUsuario = perfilUsuario;
     }
 }

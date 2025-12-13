@@ -1,48 +1,58 @@
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import Link from "next/link";
+
+interface CategoriaDTO {
+    idCategoria: number;
+    nomeCategoria: string;
+}
 
 interface Service {
     id: number;
     nome: string;
     descricao: string;
     precoBase: number;
-    categoria: string;
+    categoria: CategoriaDTO;
+    duracaoEmDias: number; // <-- ADIÇÃO
 }
 
-interface ServiceCardProps {
-  service: Service;
+
+interface Props {
+    service: Service;
 }
 
-const ServiceCard = ({ service }: ServiceCardProps) => {
-  return (
-    <Card className="flex flex-col h-full hover:shadow-hover transition-shadow">
-      <CardHeader>
-        <div className="flex items-start justify-between gap-2 mb-2">
-          <CardTitle className="text-xl">{service.nome}</CardTitle>
-          <Badge variant="secondary" className="shrink-0">
-            {service.categoria}
-          </Badge>
-        </div>
-        <CardDescription>{service.descricao}</CardDescription>
-      </CardHeader>
-      <CardContent className="flex-grow">
-        <div className="text-2xl font-bold text-primary">
-          R${service.precoBase}
-        </div>
-      </CardContent>
-      <CardFooter>
-          <Link href={`/client/appointments/new?serviceId=${service.id}`} className="w-full">
-        <Button className="w-full">
+const ServiceCard = ({ service }: Props) => {
+    return (
+        <Card className="flex flex-col">
+            <CardHeader>
+                <div className="flex justify-between items-start gap-2">
+                    <CardTitle className="text-lg">{service.nome}</CardTitle>
+                    <Badge>{service.categoria.nomeCategoria}</Badge>
+                </div>
+                <CardDescription>{service.descricao}</CardDescription>
+            </CardHeader>
 
-                Contrate Já
+            <CardContent>
+                <p className="text-2xl font-bold">
+                    R$ {service.precoBase.toFixed(2)}
+                </p>
 
-        </Button>
-          </Link>
-      </CardFooter>
-    </Card>
-  );
+                <p className="text-sm text-muted-foreground mt-1">
+                    Duração: {service.duracaoEmDias} dia(s)
+                </p>
+            </CardContent>
+
+
+            <Link href={`/client/appointments/new?serviceId=${service.id}`} className="w-full">
+            <CardFooter>
+                <Button className="w-full">
+                    Ver detalhes
+                </Button>
+            </CardFooter>
+            </Link>
+        </Card>
+    );
 };
 
 export default ServiceCard;

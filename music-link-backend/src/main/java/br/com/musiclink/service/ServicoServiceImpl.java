@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import br.com.musiclink.domain.entity.ServicoMusicInfo;
+import br.com.musiclink.repository.ServicoMusicInfoRepository;
 import br.com.serviceframework.domain.DTO.BuscaServicosDTO;
 import br.com.serviceframework.domain.interfaces.ICategoriaServicos;
 import br.com.musiclink.domain.DTO.ServicoDTO;
@@ -25,11 +27,14 @@ import br.com.serviceframework.service.ServicoService;
 public class ServicoServiceImpl extends ServicoService {
 
     private final ServicoRepository servicoRepository;
+    private final ServicoMusicInfoRepository servicoMusicInfoRepository;
 
     @Autowired
-    public ServicoServiceImpl(ServicoRepository servicoRepository) {
+    public ServicoServiceImpl(ServicoRepository servicoRepository,
+                              ServicoMusicInfoRepository servicoMusicInfoRepository) {
         super(servicoRepository);
         this.servicoRepository = servicoRepository;
+        this.servicoMusicInfoRepository = servicoMusicInfoRepository;
     }
 
     @Autowired
@@ -143,6 +148,8 @@ public class ServicoServiceImpl extends ServicoService {
     private Servico criarServicoFromDTO(ServicoDTO dto, Prestador prestador) {
         ICategoriaServicos categoriaDoDominio = CategoriaMusica.ofId(dto.categoriaId());
 
+
+
         if (categoriaDoDominio == null) {
             throw new IllegalArgumentException("ID de Categoria " + dto.categoriaId() + " é inválido para este domínio.");
         }
@@ -155,6 +162,13 @@ public class ServicoServiceImpl extends ServicoService {
 
         servico.setPrestador(prestador);
 
+        servicoRepository.save(servico);
+        ServicoMusicInfo musicInfo = new ServicoMusicInfo();
+        musicInfo.setServicoId(servico.getId());
+        musicInfo.setQuantidadeAulas(dto.duracaoEmDias());
+        CategoriaMusica instrumento = CategoriaMusica.ofId(dto.categoriaId());
+        musicInfo.setInstrumento(instrumento);
+        servicoMusicInfoRepository.save(musicInfo);
         return servico;
     }
 

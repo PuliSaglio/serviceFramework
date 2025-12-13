@@ -2,6 +2,7 @@ package br.com.musiclink.domain.DTO;
 
 import br.com.serviceframework.domain.entity.Agendamento;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public class AgendamentoListagemDTO {
@@ -14,10 +15,11 @@ public class AgendamentoListagemDTO {
     private Long servicoId;
     private String nomeServico;
     private String nomePrestador;
+    private BigDecimal precoTotal;
 
     public AgendamentoListagemDTO() {}
 
-    public AgendamentoListagemDTO(Long id, LocalDateTime dataHora, String status, String observacao, Long clienteId, String nomeCliente, Long servicoId, String nomeServico, String nomePrestador) {
+    public AgendamentoListagemDTO(Long id, LocalDateTime dataHora, String status, String observacao, Long clienteId, String nomeCliente, Long servicoId, String nomeServico, String nomePrestador,  BigDecimal precoTotal) {
         this.id = id;
         this.dataHora = dataHora;
         this.status = status;
@@ -27,6 +29,7 @@ public class AgendamentoListagemDTO {
         this.servicoId = servicoId;
         this.nomeServico = nomeServico;
         this.nomePrestador = nomePrestador;
+        this.precoTotal = precoTotal;
     }
 
     public AgendamentoListagemDTO(Agendamento agendamento) {
@@ -39,6 +42,15 @@ public class AgendamentoListagemDTO {
         this.servicoId = agendamento.getServico().getId();
         this.nomeServico = agendamento.getServico().getNome();
         this.nomePrestador = agendamento.getServico().getPrestador().getUser().getUsername();
+    }
+
+
+    public BigDecimal getPrecoTotal() {
+        return precoTotal;
+    }
+
+    public void setPrecoTotal(BigDecimal precoTotal) {
+        this.precoTotal = precoTotal;
     }
 
     public Long getId() {
